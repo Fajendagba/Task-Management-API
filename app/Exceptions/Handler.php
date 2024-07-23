@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +27,25 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($request->expectsJson()) {
+            if ($exception instanceof \Illuminate\Validation\ValidationException) {
+                return response()->json([
+                    'error' => 'Validation failed',
+                    'messages' => $exception->errors(),
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            if ($exception instanceof \Illuminate\Auth\AuthenticationException) {
+                return response()->json([
+                    'error' => 'Unauthenticated',
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+        }
+
+        return parent::render($request, $exception);
     }
 }
