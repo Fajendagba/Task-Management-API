@@ -2,8 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -44,8 +46,19 @@ class Handler extends ExceptionHandler
                     'error' => 'Unauthenticated',
                 ], Response::HTTP_UNAUTHORIZED);
             }
+
+            if ($exception instanceof MethodNotAllowedHttpException) {
+                return response()->json([
+                    'message' => 'Method not allowed. Please check the request method and try again.'
+                ], Response::HTTP_METHOD_NOT_ALLOWED);
+            }
         }
 
         return parent::render($request, $exception);
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        return response()->json(['message' => 'Unauthenticated. Please login to access this resource.'], 401);
     }
 }
