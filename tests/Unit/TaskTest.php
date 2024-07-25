@@ -13,10 +13,10 @@ class TaskTest extends TestCase
     public function test_can_create_task()
     {
         $taskData = [
-            'title' => 'Test Task',
-            'description' => 'This is a test task',
+            'title' => 'Get Askadoc Offer',
+            'description' => 'Get Askadoc Backend Developer Offer',
             'status' => 'pending',
-            'due_date' => '2024-12-31',
+            'due_date' => '2024-07-26'
         ];
 
         $task = Task::create($taskData);

@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class TaskController extends Controller
 {
@@ -72,7 +73,9 @@ class TaskController extends Controller
     {
         try {
             $this->taskService->deleteTask($id);
-            return response()->json(null, Response::HTTP_NO_CONTENT);
+            return response()->json([
+                'message' => 'Task deleted!'
+            ], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'error' => 'Task not found'
@@ -84,9 +87,17 @@ class TaskController extends Controller
 
     protected function handleException(\Exception $e): JsonResponse
     {
+        if ($e instanceof ValidationException) {
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => $e->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        Log::error($e);
         return response()->json(
             [
-                'error' => 'An unexpected error occurred. Please try again later.'
+                'message' => 'An unexpected error occurred. Please try again later.'
             ],
             Response::HTTP_INTERNAL_SERVER_ERROR
         );
