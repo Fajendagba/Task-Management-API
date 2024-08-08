@@ -6,6 +6,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -51,6 +52,12 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'message' => 'Method not allowed. Please check the request method and try again.'
                 ], Response::HTTP_METHOD_NOT_ALLOWED);
+            }
+
+            if ($exception instanceof RouteNotFoundException) {
+                return response()->json([
+                    'message' => 'Unauthenticated. Please login to access this resource.'
+                ], Response::HTTP_UNAUTHORIZED);
             }
         }
 
