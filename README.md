@@ -12,7 +12,7 @@ This Task Management API is built using Laravel, providing a robust API for mana
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/yourusername/task-management-api.git
+    git clone https://github.com/fajendagba/task-management-api.git
     cd task-management-api
     ```
 
